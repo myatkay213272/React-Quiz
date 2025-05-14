@@ -1,7 +1,7 @@
 
 const Content = ({children}) => {
   return (
-    <main className="main">
+    <main>
         {children}
     </main>
   )

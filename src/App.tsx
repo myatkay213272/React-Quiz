@@ -4,10 +4,12 @@ import { useEffect, useReducer } from "react";
 import Loader from "./components/Loader";
 import Error from "./components/Error";
 import StartScreen from "./components/StartScreen";
+import Question from "./components/Question";
 
 const initialState = {
   questions: [],
-  status: 'loading' // 'loading','error','ready','active','finished'
+  status: 'loading' ,// 'loading','error','ready','active','finished'
+  index : 0
 };
 
 const reducer = (state, action) => {
@@ -23,6 +25,11 @@ const reducer = (state, action) => {
         ...state,
         status: "error"
       };
+    case 'start' :
+      return {
+        ...state,
+        status : 'active'
+      }
     default:
       throw new Error('Action unknown');
   }
@@ -30,7 +37,7 @@ const reducer = (state, action) => {
 
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { questions, status } = state;
+  const { questions, status ,index } = state;
 
   const numQuestions = questions.length
 
@@ -63,7 +70,16 @@ const App = () => {
 
         {status === "ready" && (
           <div className="text-center mt-5">
-             <StartScreen numQuestions = {numQuestions}/>
+             <StartScreen 
+              numQuestions = {numQuestions}
+              dispatch={dispatch}
+            />
+          </div>
+        )}
+
+        {status === "active" &&(
+          <div className="text-center mt-5">
+            <Question question = {questions[index]}/>
           </div>
         )}
        
