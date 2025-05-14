@@ -1,60 +1,75 @@
-import Header from "./components/Header"
-import Main from "./components/Content"
-import { useEffect, useReducer } from "react"
+import Header from "./components/Header";
+import Main from "./components/Content";
+import { useEffect, useReducer } from "react";
+import Loader from "./components/Loader";
+import Error from "./components/Error";
+import StartScreen from "./components/StartScreen";
 
 const initialState = {
-  questions : [],
+  questions: [],
+  status: 'loading' // 'loading','error','ready','active','finished'
+};
 
-  //'loading','error','ready','active','finished'
-  status : 'loading'
-}
-
-const reducer = (state,action) =>{
-  switch(action.type){
-    case 'dataReceived' :
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'dataReceived':
       return {
         ...state,
-        questions : action.payload,
+        questions: action.payload,
         status: "ready"
-      }
-    case 'dataFailed' :
+      };
+    case 'dataFailed':
       return {
         ...state,
-        status : "error"
-      }
-    default :
-      throw new Error('Action unknown')
+        status: "error"
+      };
+    default:
+      throw new Error('Action unknown');
   }
-}
+};
 
 const App = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { questions, status } = state;
 
-  const [state,dispatch] = useReducer(reducer,initialState)
+  const numQuestions = questions.length
 
-  useEffect(()=>{
+  useEffect(() => {
     fetch('http://localhost:8000/questions')
-      .then(res=>res.json())
-      .then(data=>dispatch({type:'dataReceived',
-        payload : data
+      .then(res => res.json())
+      .then(data => dispatch({
+        type: 'dataReceived',
+        payload: data
       }))
-      .catch(err=>dispatch({type: 'dataFailed'}))
-  },[])
+      .catch(err => dispatch({ type: 'dataFailed' }));
+  }, []);
 
   return (
-    
-    <div className="app-container">
-      <Header/>
-
+    <div className="container py-4">
+      
+      <Header />
 
       <Main>
-        <p>1/15</p>
-        <p>Question?</p>
+        {status === "loading" && (
+          <div className="text-center mt-5">
+            <Loader />
+          </div>
+        )}
+        {status === "error" && (
+          <div className="text-center mt-5">
+            <Error />
+          </div>
+        )}
+
+        {status === "ready" && (
+          <div className="text-center mt-5">
+             <StartScreen numQuestions = {numQuestions}/>
+          </div>
+        )}
+       
       </Main>
     </div>
+  );
+};
 
-    
-
-  )
-}
-
-export default App
+export default App;
