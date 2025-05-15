@@ -1,16 +1,18 @@
-const Question = ({ question }) => {
+import Options from "./Options";
+
+const Question = ({ question,dispatch,answer }) => {
   console.log(question);
   return (
     <div className="card p-3 mb-3">
 
       <h4>{question.question}</h4>
 
-       <div className="btn-group-vertical">
-        {question.options.map((option, index) => (
-          <button key={index} className="btn bg-secondary text-white mb-2 rounded-pill shake-on-hover">
-            {option}
-          </button>
-        ))}
+       <div>
+        <Options 
+          question = {question}
+          dispatch = {dispatch}
+          answer = {answer}
+        />
       </div>
 
     </div>
